@@ -42,7 +42,7 @@ log "kubeadm init 완료"
 # ─────────────────────────────────────────────
 info "kubectl 설정 중..."
 
-REAL_USER=${SUDO_USER:-ubuntu}
+REAL_USER=${SUDO_USER:-$(logname 2>/dev/null || whoami)}
 REAL_HOME=$(eval echo ~$REAL_USER)
 
 mkdir -p $REAL_HOME/.kube
@@ -56,8 +56,7 @@ log "kubectl 설정 완료 (사용자: $REAL_USER)"
 # ─────────────────────────────────────────────
 info "Calico CNI 설치 중..."
 
-# ubuntu 사용자 권한으로 kubectl 실행
-sudo -u $REAL_USER kubectl apply \
+KUBECONFIG=$REAL_HOME/.kube/config kubectl apply \
   -f https://raw.githubusercontent.com/projectcalico/calico/v3.29.0/manifests/calico.yaml
 
 log "Calico CNI 설치 완료"
